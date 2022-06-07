@@ -58,7 +58,7 @@ curl -X GET https://service-5fa1xyn7-1253970226.sh.apigw.tencentcs.com/release/ 
 open /tmp/transformed.png
 ```
 
-推理效果：
+迁移效果：
 
 ![风格迁移](https://user-images.githubusercontent.com/251222/172288034-325598e0-3c15-4feb-8668-9e708e6b6e4b.png)
 
@@ -68,15 +68,16 @@ open /tmp/transformed.png
 curl --location --request POST 'https://service-5fa1xyn7-1253970226.sh.apigw.tencentcs.com/release/' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "content_image_path": "https://web-helloworld-xxx.cos.ap-guangzhou.myqcloud.com/gpu_demo/content.png",
-    "style_image_path": "https://web-helloworld-yyyy.cos.ap-guangzhou.myqcloud.com/gpu_demo/style.png"
+    "content_image_path": "https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/woman.jpg",
+    "style_image_path": "https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/snow.png"
 }' \
-  -- output /tmp/transformed.png
+--output /tmp/transformed.png
 
-open /tmp/transformed.png
+open /tmp/transformeded.png
 ```
 
-推理效果：
+迁移效果：
 
+![风格迁移](https://user-images.githubusercontent.com/251222/172374628-3107625d-c701-4f74-b621-42b3fb0b13dd.png)
 
 
