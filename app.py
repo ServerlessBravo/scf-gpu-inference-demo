@@ -63,7 +63,7 @@ class MyRequest(BaseHTTPRequestHandler):
         hub_model_path = hub.load(hub_model_path)
         stylized_image = hub_model_path(tf.constant(content_image), tf.constant(style_image))[0]
 
-        ntf = tempfile.NamedTemporaryFile(delete=False)
+        ntf = tempfile.NamedTemporaryFile(delete=False, suffix = '.png')
         self.tensor_to_image(stylized_image).save(ntf.name)
         return ntf.name
 
@@ -75,6 +75,8 @@ class MyRequest(BaseHTTPRequestHandler):
 
         with open(path, 'rb') as file_handle:
             self.wfile.write(file_handle.read())
+
+        os.remove(path)
 
     def do_GET(self):
         file_path = self.do_style_transfer()
