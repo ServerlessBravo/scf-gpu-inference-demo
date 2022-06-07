@@ -51,8 +51,6 @@ class MyRequest(BaseHTTPRequestHandler):
         mpl.rcParams['figure.figsize'] = (12,12)
         mpl.rcParams['axes.grid'] = False
 
-        # 替换为个人账号下的 COS，需具备可读可写权限。
-        # content_image_path 为内容图像的 COS 地址，style_path 为风格图像的 COS 地址。
         content_image_file = tf.keras.utils.get_file('tiger.jpg', content_image_path)
         style_image_file = tf.keras.utils.get_file('snow.jpg',style_image_path)
 
