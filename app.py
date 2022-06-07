@@ -15,16 +15,9 @@ import PIL
 import tensorflow as tf
 import pathlib
 import urllib.request
+import tempfile
 
 class MyRequest(BaseHTTPRequestHandler):
-    def upload(self, url, path):
-        print("enter upload:", url)
-        headers = {
-            'Content-Type': 'application/octet-stream',
-            'Content-Length': os.stat(path).st_size,
-        }
-        req = urllib.request.Request(url, open(path, 'rb'), headers=headers, method='PUT')
-        urllib.request.urlopen(req)
 
     def tensor_to_image(self, tensor):
         tensor = tensor*255
@@ -50,44 +43,47 @@ class MyRequest(BaseHTTPRequestHandler):
         img = img[tf.newaxis, :]
         return img
 
-    def do_style_transfer(self):
+    def do_style_transfer(self, data = dict()):
+        hub_model_path = data.get('hub_model_path') or 'https://hub.tensorflow.google.cn/google/magenta/arbitrary-image-stylization-v1-256/2'
+        content_image_path = data.get('content_image_path') or 'https://user-images.githubusercontent.com/251222/172333887-a2a8df76-51f0-4719-9d64-2171bdc8d2ed.png'
+        style_image_path = data.get('style_image_path') or 'https://user-images.githubusercontent.com/251222/172333875-643e9185-2a0e-42af-bfd3-5d8307ce0fd5.png'
+
         mpl.rcParams['figure.figsize'] = (12,12)
         mpl.rcParams['axes.grid'] = False
 
         # 替换为个人账号下的 COS，需具备可读可写权限。
-        # content_path 为内容图像的 COS 地址，style_path 为风格图像的 COS 地址。
-        content_path = tf.keras.utils.get_file('tiger.jpg', 'https://*****/gpu-image/tiger.jpg')
-        style_path = tf.keras.utils.get_file('snow.jpg','https://*****/gpu-image/snow.jpg')
+        # content_image_path 为内容图像的 COS 地址，style_path 为风格图像的 COS 地址。
+        content_image_file = tf.keras.utils.get_file('tiger.jpg', content_image_path)
+        style_image_file = tf.keras.utils.get_file('snow.jpg',style_image_path)
 
-        content_image = self.load_img(content_path)
-        style_image = self.load_img(style_path)
+        content_image = self.load_img(content_image_file)
+        style_image = self.load_img(style_image_file)
 
         import tensorflow_hub as hub
-        hub_model = hub.load('https://hub.tensorflow.google.cn/google/magenta/arbitrary-image-stylization-v1-256/2')
-        stylized_image = hub_model(tf.constant(content_image), tf.constant(style_image))[0]
-        path = "/tmp/stylized-image.png"
-        self.tensor_to_image(stylized_image).save(path)
+        hub_model_path = hub.load(hub_model_path)
+        stylized_image = hub_model_path(tf.constant(content_image), tf.constant(style_image))[0]
 
-        # 替换为个人账号下的OSS，需具备可读可写的权限。
-        # 此处会将合成的图片存储至指定的 COS 地址。
-        self.upload("https://*****/gpu-image/stylized.png", path)
+        ntf = tempfile.NamedTemporaryFile(delete=False)
+        self.tensor_to_image(stylized_image).save(ntf.name)
+        return ntf.name
 
-        return "transfer ok"
-
-    def reply(self, msg):
-        data = {"result": msg}
+    def reply(self, path):
         self.send_response(200)
-        self.send_header("Content-type", "application/json")
+        self.send_header('Content-Type', 'image/png')
+        self.send_header('Content-Length', str(os.stat(path).st_size))
         self.end_headers()
-        self.wfile.write(json.dumps(data).encode())
+
+        with open(path, 'rb') as file_handle:
+            self.wfile.write(file_handle.read())
 
     def do_GET(self):
-        msg = self.do_style_transfer()
-        self.reply(msg)
+        file_path = self.do_style_transfer()
+        self.reply(file_path)
 
     def do_POST(self):
-        msg = self.do_style_transfer()
-        self.reply(msg)
+        data = json.loads(self.request.content.read())
+        file_path = self.do_style_transfer(data)
+        self.reply(file_path)
 
 if __name__ == "__main__":
     host = ("0.0.0.0", 9000)
