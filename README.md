@@ -22,3 +22,4 @@ docker push xxx.tencentcloudcr.com/yyyy/scf_gpu_demo:latest
 ## 推理效果
 
 
+![风格迁移](https://user-images.githubusercontent.com/251222/172288034-325598e0-3c15-4feb-8668-9e708e6b6e4b.png)
