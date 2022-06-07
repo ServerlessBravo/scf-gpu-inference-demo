@@ -48,7 +48,7 @@ class MyRequest(BaseHTTPRequestHandler):
         return os.path.basename(urlparse(url).path)
 
     def do_style_transfer(self, data = dict()):
-        hub_model_path = data.get('hub_model_path') or 'https://hub.tensorflow.google.cn/google/magenta/arbitrary-image-stylization-v1-256/2'
+        hub_model_path = data.get('hub_model_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/magenta%3Aarbitrary-image-stylization-v1-256_v2.tar'
         content_image_path = data.get('content_image_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/tiger.png'
         style_image_path = data.get('style_image_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/snow.png'
 	
