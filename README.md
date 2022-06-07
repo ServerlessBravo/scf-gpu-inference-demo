@@ -54,7 +54,7 @@ docker push xxx.tencentcloudcr.com/yyyy/scf_gpu_demo:latest
 #### 使用默认的内容图片和风格图片：
 
 ```bash
-curl -X GET https://service-5fa1xyn7-1253970226.sh.apigw.tencentcs.com/release/ --output /tmp/transformed.png
+curl -X GET https://service-xxxx.sh.apigw.tencentcs.com/release/ --output /tmp/transformed.png
 open /tmp/transformed.png
 ```
 
