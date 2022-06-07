@@ -81,3 +81,9 @@ open /tmp/transformeded.png
 ![风格迁移](https://user-images.githubusercontent.com/251222/172374628-3107625d-c701-4f74-b621-42b3fb0b13dd.png)
 
 
+## 备注
+
+- 由于网络原因，SCF无法从 `Tensforflow Hub` 自动下载模型，建议离线下载之后存放到COS之后，通过COS地址访问
+- 可以通过 `hub_model_path` 配置事先下载的模型地址，例如 `https://xxxx.cos.ap-guangzhou.myqcloud.com/gpu_demo/magenta%3Aarbitrary-image-stylization-v1-256_v2.tar`
+- 图片链接需要可以公网可以访问，如果需要额外的权限认证会导致文件下载失败
+- 使用的模型：[magenta/arbitrary-image-stylization-v1-256-v2](https://hub.tensorflow.google.cn/google/magenta/arbitrary-image-stylization-v1-256/2)
