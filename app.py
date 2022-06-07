@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
 # python2 and python3
-from __future__ import print_function
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.models import Sequential
 import json
-import sys
 import os
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 import numpy as np
 import PIL
 import tensorflow as tf
-import pathlib
-import urllib.request
 from urllib.parse import urlparse
 import tempfile
+import tensorflow_hub as hub
 
 class MyRequest(BaseHTTPRequestHandler):
 
@@ -52,17 +44,12 @@ class MyRequest(BaseHTTPRequestHandler):
         content_image_path = data.get('content_image_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/tiger.png'
         style_image_path = data.get('style_image_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/snow.png'
 	
-
-        mpl.rcParams['figure.figsize'] = (12,12)
-        mpl.rcParams['axes.grid'] = False
-
         content_image_file = tf.keras.utils.get_file(self.file_base_name(content_image_path), content_image_path)
         style_image_file = tf.keras.utils.get_file(self.file_base_name(style_image_path), style_image_path)
 
         content_image = self.load_img(content_image_file)
         style_image = self.load_img(style_image_file)
 
-        import tensorflow_hub as hub
         hub_model_path = hub.load(hub_model_path)
         stylized_image = hub_model_path(tf.constant(content_image), tf.constant(style_image))[0]
 
@@ -98,4 +85,5 @@ if __name__ == "__main__":
     server = HTTPServer(host, MyRequest)
     print("Starting server, listen at: %s:%s" % host)
     server.serve_forever()
+
 
