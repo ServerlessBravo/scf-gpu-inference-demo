@@ -15,6 +15,7 @@ import PIL
 import tensorflow as tf
 import pathlib
 import urllib.request
+from urllib.parse import urlparse
 import tempfile
 
 class MyRequest(BaseHTTPRequestHandler):
@@ -43,16 +44,20 @@ class MyRequest(BaseHTTPRequestHandler):
         img = img[tf.newaxis, :]
         return img
 
+    def file_base_name(self, url):
+        return os.path.basename(urlparse(url).path)
+
     def do_style_transfer(self, data = dict()):
         hub_model_path = data.get('hub_model_path') or 'https://hub.tensorflow.google.cn/google/magenta/arbitrary-image-stylization-v1-256/2'
         content_image_path = data.get('content_image_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/tiger.png'
         style_image_path = data.get('style_image_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/snow.png'
+	
 
         mpl.rcParams['figure.figsize'] = (12,12)
         mpl.rcParams['axes.grid'] = False
 
-        content_image_file = tf.keras.utils.get_file('tiger.jpg', content_image_path)
-        style_image_file = tf.keras.utils.get_file('snow.jpg',style_image_path)
+        content_image_file = tf.keras.utils.get_file(self.file_base_name(content_image_path), content_image_path)
+        style_image_file = tf.keras.utils.get_file(self.file_base_name(style_image_path), style_image_path)
 
         content_image = self.load_img(content_image_file)
         style_image = self.load_img(style_image_file)
@@ -81,7 +86,10 @@ class MyRequest(BaseHTTPRequestHandler):
         self.reply(file_path)
 
     def do_POST(self):
-        data = json.loads(self.rfile.readall())
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        data = json.loads(post_data)
+
         file_path = self.do_style_transfer(data)
         self.reply(file_path)
 
