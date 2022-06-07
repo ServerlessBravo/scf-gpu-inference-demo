@@ -45,8 +45,8 @@ class MyRequest(BaseHTTPRequestHandler):
 
     def do_style_transfer(self, data = dict()):
         hub_model_path = data.get('hub_model_path') or 'https://hub.tensorflow.google.cn/google/magenta/arbitrary-image-stylization-v1-256/2'
-        content_image_path = data.get('content_image_path') or 'https://user-images.githubusercontent.com/251222/172333887-a2a8df76-51f0-4719-9d64-2171bdc8d2ed.png'
-        style_image_path = data.get('style_image_path') or 'https://user-images.githubusercontent.com/251222/172333875-643e9185-2a0e-42af-bfd3-5d8307ce0fd5.png'
+        content_image_path = data.get('content_image_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/tiger.png'
+        style_image_path = data.get('style_image_path') or 'https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/snow.png'
 
         mpl.rcParams['figure.figsize'] = (12,12)
         mpl.rcParams['axes.grid'] = False
@@ -81,7 +81,7 @@ class MyRequest(BaseHTTPRequestHandler):
         self.reply(file_path)
 
     def do_POST(self):
-        data = json.loads(self.request.content.read())
+        data = json.loads(self.rfile.readall())
         file_path = self.do_style_transfer(data)
         self.reply(file_path)
 
