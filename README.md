@@ -65,7 +65,7 @@ open /tmp/transformed.png
 #### 使用自定义的内容图片和风格图片
 
 ```bash
-curl --location --request POST 'https://service-5fa1xyn7-1253970226.sh.apigw.tencentcs.com/release/' \
+curl --location --request POST 'https://service-xxx.sh.apigw.tencentcs.com/release/' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "content_image_path": "https://web-helloworld-1307427535.cos.ap-guangzhou.myqcloud.com/gpu_demo/woman.jpg",
