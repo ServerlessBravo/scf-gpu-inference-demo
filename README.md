@@ -1,5 +1,10 @@
 # SCF GPU 推理 Demo
 
+## 注意事项
+
+- 使用SCF GPU功能，需要申请白名单，申请地址：https://cloud.tencent.com/apply/p/wx8r0y7sx4
+- 镜像大小解压前如果超过1G，可以通过工单我们调整限制：https://cloud.tencent.com/online-service?source=PRESALE&from=doc_583
+
 
 ## 镜像构建
 
